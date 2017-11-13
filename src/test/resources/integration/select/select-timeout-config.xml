@@ -13,4 +13,13 @@
             <logger />
         </foreach>
     </flow>
+
+    <flow name="queryTimeoutSQLSERVER">
+        <db:select config-ref="dbConfig" queryTimeout="1">
+            <db:sql>#["WAITFOR DELAY '00:00:$(payload as String {format:'00'})' SELECT * from PLANET where 1 = 1 order by ID"]</db:sql>
+        </db:select>
+        <foreach>
+            <logger />
+        </foreach>
+    </flow>
 </mule>

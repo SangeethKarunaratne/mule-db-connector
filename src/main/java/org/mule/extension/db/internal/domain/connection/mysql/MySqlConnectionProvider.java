@@ -72,4 +72,8 @@ public class MySqlConnectionProvider extends DbConnectionProvider {
     }
     return empty();
   }
+
+  public void setMySqlParameters(MySqlConnectionParameters mySqlParameters) {
+    this.mySqlParameters = mySqlParameters;
+  }
 }

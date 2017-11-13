@@ -21,7 +21,7 @@ import org.junit.Test;
 
 public abstract class AbstractQueryTimeoutTestCase extends AbstractDbIntegrationTestCase {
 
-  private static final String QUERY_TIMEOUT_FLOW = "queryTimeout";
+  public static final String QUERY_TIMEOUT_FLOW = "queryTimeout";
 
   @Rule
   public ExpectedError expectedError = ExpectedError.none();

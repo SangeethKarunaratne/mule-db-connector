@@ -53,6 +53,8 @@ public class SimpleQueryTemplateParser implements QueryTemplateParser {
   private static final String TRUNCATE_REGEX = String.format(OPERATION_REGEX_TEMPLATE, "TRUNCATE TABLE");
   private static final String MERGE_REGEX = String.format(OPERATION_REGEX_TEMPLATE, "MERGE");
   private static final String WITH_REGEX = String.format(OPERATION_REGEX_TEMPLATE, "WITH");
+  //TODO WAITFOR is a valid prefix for any kind of query, not just SELECT, fix this.
+  private static final String WAITFOR_DELAY_REGEX = String.format(OPERATION_REGEX_TEMPLATE, "WAITFOR DELAY");
 
   private final Pattern storedProcedureMatcher = Pattern.compile(STORED_PROCEDURE_REGEX);
   private final Pattern updateMatcher = Pattern.compile(UPDATE_REGEX);
@@ -62,6 +64,7 @@ public class SimpleQueryTemplateParser implements QueryTemplateParser {
   private final Pattern truncateMatcher = Pattern.compile(TRUNCATE_REGEX);
   private final Pattern mergeMatcher = Pattern.compile(MERGE_REGEX);
   private final Pattern withMatcher = Pattern.compile(WITH_REGEX);
+  private final Pattern waitForDelay = Pattern.compile(WAITFOR_DELAY_REGEX);
 
   @Override
   public QueryTemplate parse(String sql) {
@@ -93,10 +96,16 @@ public class SimpleQueryTemplateParser implements QueryTemplateParser {
       queryType = QueryType.MERGE;
     } else if (isWith(sql)) {
       queryType = QueryType.SELECT;
+    } else if (isWaitForDelay(sql)) {
+      queryType = QueryType.SELECT;
     } else {
       queryType = QueryType.DDL;
     }
     return queryType;
+  }
+
+  private boolean isWaitForDelay(String sql) {
+    return waitForDelay.matcher(sql).matches();
   }
 
   private QueryTemplate doParse(String sqlText, QueryType queryType) {

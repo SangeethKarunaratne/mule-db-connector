@@ -4,14 +4,14 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.extension.db.internal.domain.connection.mysql;
+package org.mule.extension.db.internal.domain.connection.sqlserver;
 
-import static java.lang.String.format;
+import static org.mule.extension.db.internal.domain.connection.sqlserver.SqlServerConnectionProvider.DRIVER_CLASS_NAME;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
-import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.extension.db.internal.domain.connection.BaseDbConnectionParameters;
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
+import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Password;
@@ -20,20 +20,9 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
+public class SqlServerConnectionParameters extends BaseDbConnectionParameters implements DataSourceConfig {
 
-/**
- * {@link DataSourceConfig} implementation for MySQL databases.
- *
- * @since 1.0
- */
-public final class MySqlConnectionParameters extends BaseDbConnectionParameters implements DataSourceConfig {
-
-  static final String MYSQL_DRIVER_CLASS = "com.mysql.jdbc.Driver";
-  private static final String MY_SQL_PREFIX = "jdbc:mysql://";
-  private static final String LOGGER_PROPERTY = "logger";
-  private static final String MY_SQL_LOGGER = "org.mule.extension.db.api.logger.MuleMySqlLogger";
-  private static final Logger LOGGER = getLogger(MySqlConnectionParameters.class);
+  private static final String SUB_PROTOCOL = "jdbc:sqlserver://";
 
   /**
    * Configures the host of the database
@@ -46,6 +35,7 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
    * Configures the port of the database
    */
   @Parameter
+  @Optional(defaultValue = "1433")
   @Placement(order = 2)
   private Integer port;
 
@@ -67,12 +57,12 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
   private String password;
 
   /**
-   * The name of the database
+   *
    */
   @Parameter
   @Optional
   @Placement(order = 5)
-  private String database;
+  private String databaseName;
 
   /**
    * Specifies a list of custom key-value connectionProperties for the config.
@@ -80,17 +70,35 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
   @Parameter
   @Optional
   @Placement(tab = ADVANCED_TAB)
+  @NullSafe
   private Map<String, String> connectionProperties = new HashMap<>();
 
   @Override
   public String getUrl() {
-    addMuleLoggerProperty(connectionProperties);
-    return MySqlDbUtils.getEffectiveUrl(MY_SQL_PREFIX, host, port, database, connectionProperties);
+    return SUB_PROTOCOL + host + ":" + port + getProperties();
+  }
+
+  private String getProperties() {
+    StringBuilder stringBuilder = new StringBuilder();
+
+    if (databaseName != null) {
+      stringBuilder.append(";databaseName=");
+      stringBuilder.append(databaseName);
+    }
+
+    connectionProperties.forEach((key, value) -> {
+      stringBuilder.append(";");
+      stringBuilder.append(key);
+      stringBuilder.append("=");
+      stringBuilder.append(value);
+    });
+
+    return stringBuilder.toString();
   }
 
   @Override
   public String getDriverClassName() {
-    return MYSQL_DRIVER_CLASS;
+    return DRIVER_CLASS_NAME;
   }
 
   @Override
@@ -117,19 +125,5 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
 
   public void setPassword(String password) {
     this.password = password;
-  }
-
-  private void addMuleLoggerProperty(Map<String, String> connectionProperties) {
-    if (connectionProperties != null) {
-      try {
-        Thread.currentThread().getContextClassLoader().loadClass(MY_SQL_LOGGER);
-        connectionProperties.putIfAbsent(LOGGER_PROPERTY, MY_SQL_LOGGER);
-      } catch (Throwable e) {
-        LOGGER.warn(format("Unable to attach Mule Logger to MySql Driver. Cause: %s", e.getMessage()));
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug("Unable to attach Mule Logger to MySql Driver", e);
-        }
-      }
-    }
   }
 }

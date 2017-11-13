@@ -8,6 +8,7 @@ package org.mule.extension.db.api.param;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
+
 import org.mule.runtime.api.util.Reference;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;

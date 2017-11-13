@@ -26,9 +26,14 @@ public class StaticDbTypeManager implements DbTypeManager {
     }
   }
 
+  //TODO REVIEW
   @Override
   public DbType lookup(DbConnection connection, int id, String name) throws UnknownDbTypeException {
-    throw new UnknownDbTypeException(id, name);
+    if (vendorTypes.containsKey(name)) {
+      return vendorTypes.get(name);
+    } else {
+      throw new UnknownDbTypeException(name);
+    }
   }
 
   @Override

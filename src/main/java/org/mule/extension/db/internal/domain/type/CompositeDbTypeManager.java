@@ -9,6 +9,7 @@ package org.mule.extension.db.internal.domain.type;
 
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -16,6 +17,7 @@ import java.util.List;
  */
 public class CompositeDbTypeManager implements DbTypeManager {
 
+  private List<DbTypeManager> priorityTypeManagers;
   private List<DbTypeManager> typeManagers;
 
   /**
@@ -23,7 +25,19 @@ public class CompositeDbTypeManager implements DbTypeManager {
    *
    * @param typeManagers sorted type managers used to resolve DB types.
    */
+  //TODO REVIEW - This is done to make each Connection be able to override how to handle an already know JDBC Type
+  public CompositeDbTypeManager(List<DbTypeManager> priorityTypeManagers, List<DbTypeManager> typeManagers) {
+    this.priorityTypeManagers = priorityTypeManagers;
+    this.typeManagers = typeManagers;
+  }
+
+  /**
+  * Creates a composed DB type manager
+  *
+  * @param typeManagers sorted type managers used to resolve DB types.
+  */
   public CompositeDbTypeManager(List<DbTypeManager> typeManagers) {
+    this.priorityTypeManagers = Collections.emptyList();
     this.typeManagers = typeManagers;
   }
 
@@ -39,7 +53,15 @@ public class CompositeDbTypeManager implements DbTypeManager {
    * @return a type that corresponds to the given ID and name
    * @throws UnknownDbTypeException when there is no managed type with the given ID and name
    */
+  //TODO REVIEW - This is done to make each Connection be able to override how to handle an already know JDBC Type
   public DbType lookup(DbConnection connection, int id, String name) throws UnknownDbTypeException {
+    for (DbTypeManager typeManager : priorityTypeManagers) {
+      try {
+        return typeManager.lookup(connection, id, name);
+      } catch (UnknownDbTypeException e) {
+        // Ignore and continue
+      }
+    }
     for (DbTypeManager typeManager : typeManagers) {
       try {
         return typeManager.lookup(connection, id, name);
