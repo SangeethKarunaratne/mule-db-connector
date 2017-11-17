@@ -36,6 +36,11 @@ public class DbExceptionHandler extends ExceptionHandler {
                 return new ConnectionException(e.getMessage(), e);
               }
 
+              //TODO - REVIEW where this should belong
+              if (sqlException.getErrorCode() == 156) {
+                return new BadSqlSyntaxException(sqlException.getMessage(), sqlException);
+              }
+
               return new QueryExecutionException(sqlException.getMessage(), sqlException);
             })
             .orElse(e));

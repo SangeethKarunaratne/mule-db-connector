@@ -8,6 +8,7 @@ package org.mule.extension.db.integration.storedprocedure;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
+
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 
 import java.util.Map;

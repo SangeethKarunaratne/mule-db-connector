@@ -6,6 +6,7 @@
             http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
     <db:config name="dbConfig">
-        <db:my-sql-connection host="0.0.0.0" port="3306" user="root" password="my-secret-pw" database="xe"/>
+        <db:mssql-connection host="0.0.0.0" user="sa" password="yourStrong(!)Password"/>
     </db:config>
+
 </mule>

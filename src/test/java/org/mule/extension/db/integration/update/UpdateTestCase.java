@@ -34,7 +34,6 @@ import io.qameta.allure.Story;
 import org.junit.Ignore;
 import org.junit.Test;
 
-
 @Feature(DB_EXTENSION)
 @Story("Update Statement")
 public class UpdateTestCase extends AbstractDbIntegrationTestCase {
@@ -46,14 +45,12 @@ public class UpdateTestCase extends AbstractDbIntegrationTestCase {
     return new String[] {"integration/update/update-config.xml"};
   }
 
-  @Test
   @Description("This tests the MERGE statement. Is not executed with MySQL due that is not supported by the DB.")
   public void mergesTables() throws Exception {
     assumeThat(testDatabase.getDbType(), is(not(MYSQL)));
     assertMergeResult(flowRunner("merge").run().getMessage());
   }
 
-  @Test
   @Ignore("MULE-12338")
   @Issue("MULE-12338")
   public void truncateTable() throws Exception {

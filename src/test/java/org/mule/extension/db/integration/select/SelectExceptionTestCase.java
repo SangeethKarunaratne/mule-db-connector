@@ -14,12 +14,12 @@ import static org.junit.Assert.fail;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.DerbyTestDatabase;
 
-import org.junit.Test;
-import org.junit.runners.Parameterized;
+import javax.sql.DataSource;
 
 import java.util.List;
 
-import javax.sql.DataSource;
+import org.junit.Test;
+import org.junit.runners.Parameterized;
 
 public class SelectExceptionTestCase extends AbstractDbIntegrationTestCase {
 
