@@ -158,7 +158,8 @@ public class SimpleQueryTemplateParser implements QueryTemplateParser {
         sqlToUse = sqlToUse + "?";
         tokenStart = tokenEnd;
       } else if (currentChar == ':') {
-        if (tokenEnd < sqlTextChars.length && '=' == sqlTextChars[tokenEnd]) {
+        if (tokenEnd < sqlTextChars.length
+            && ('=' == sqlTextChars[tokenEnd] || ':' == sqlTextChars[tokenEnd] || ' ' == sqlTextChars[tokenEnd])) {
           sqlToUse = sqlToUse + currentChar;
           tokenStart++;
         } else {
