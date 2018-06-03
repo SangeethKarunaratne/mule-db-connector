@@ -79,7 +79,7 @@ public class MetadataDbTypeManager implements DbTypeManager {
       DatabaseMetaData metaData = connection.getJdbcConnection().getMetaData();
       ResultSet typeInfo = metaData.getTypeInfo();
       ResultSetIterator resultSetIterator =
-          new ResultSetIterator(typeInfo, new InsensitiveMapRowHandler());
+          new ResultSetIterator(typeInfo, new InsensitiveMapRowHandler(connection));
       while (resultSetIterator.hasNext()) {
         Map<String, Object> typeRecord = resultSetIterator.next();
 

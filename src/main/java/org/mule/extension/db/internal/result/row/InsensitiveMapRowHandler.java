@@ -11,6 +11,7 @@ import static org.mule.runtime.api.metadata.MediaType.BINARY;
 import static org.mule.runtime.api.metadata.MediaType.TEXT;
 import static org.mule.runtime.api.metadata.MediaType.XML;
 
+import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.core.api.util.CaseInsensitiveHashMap;
@@ -29,6 +30,12 @@ import java.util.Map;
  */
 public class InsensitiveMapRowHandler implements RowHandler {
 
+  private DbConnection connection;
+
+  public InsensitiveMapRowHandler(DbConnection connection) {
+    this.connection = connection;
+  }
+
   @Override
   public Map<String, Object> process(ResultSet resultSet) throws SQLException {
     Map result = new CaseInsensitiveHashMap();
@@ -36,8 +43,13 @@ public class InsensitiveMapRowHandler implements RowHandler {
     int cols = metaData.getColumnCount();
 
     for (int i = 1; i <= cols; i++) {
+      Object value;
       String column = metaData.getColumnLabel(i);
-      Object value = resultSet.getObject(i);
+      if (connection != null) {
+        value = connection.getObject(resultSet, i);
+      } else {
+        value = resultSet.getObject(i);
+      }
 
       if (value instanceof SQLXML) {
         result.put(column, handleSqlXmlType((SQLXML) value));

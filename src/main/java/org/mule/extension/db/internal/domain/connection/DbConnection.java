@@ -14,6 +14,8 @@ import org.mule.extension.db.internal.result.statement.StatementResultIteratorFa
 import org.mule.runtime.extension.api.connectivity.TransactionalConnection;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -69,4 +71,8 @@ public interface DbConnection extends TransactionalConnection {
    * @return a boolean indicating if the current connection is being part of a Transaction.
    */
   boolean isTransactionActive();
+
+  default Object getObject(ResultSet resultSet, int i) throws SQLException {
+    return resultSet.getObject(i);
+  }
 }
