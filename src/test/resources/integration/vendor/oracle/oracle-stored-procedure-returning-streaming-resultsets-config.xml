@@ -34,6 +34,6 @@
             </processor-chain>
         </enricher>
 
-        <set-payload value="#[mel:flowVars['records']]"/>
+        <set-payload value="#[vars.records]"/>
     </flow>
 </mule>

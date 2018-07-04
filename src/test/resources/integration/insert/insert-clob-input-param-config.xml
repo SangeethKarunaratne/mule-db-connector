@@ -44,8 +44,7 @@
                 <db:sql>select description from PLANET where name = 'Pluto'</db:sql>
             </db:select>
             <!-- Get the CLOB field value -->
-            <set-payload value="#[mel:payload.openCursor().next().get('DESCRIPTION')]"/>
-            <set-payload value="#[output application/java --- payload as String]"/>
+            <set-payload value="#[output application/java --- payload[0]['DESCRIPTION'] as String]"/>
         </try>
     </sub-flow>
 </mule>
